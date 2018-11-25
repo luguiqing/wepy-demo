@@ -1,0 +1,132 @@
+<style lang="less">
+.haizhi-card {
+  position: relative;
+  min-height: 96px;
+  padding-bottom: 6px;
+  display: flex;
+  -webkit-box-orient: vertical;
+  flex-direction: column;
+  background-color: #fff;
+
+  &__hd {
+    display: flex;
+    font-size: 17px;
+    padding: 9px 15px;
+    align-items: center;
+  }
+
+  &__content {
+    flex: 1;
+    text-align: left;
+    color: #000;
+  }
+
+  &__thumb {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    position: relative;
+    margin-left: auto;
+    margin-right: 5px;
+    overflow: hidden;
+    vertical-align: middle;
+  }
+
+  &__extra {
+    flex: 1;
+    text-align: right;
+    font-size: 17px;
+    color: #888;
+  }
+
+  &__bd {
+    position: relative;
+    padding: 15px 15px 6px;
+    font-size: 15px;
+    color: #333;
+    min-height: 40px;
+  }
+
+  &__ft {
+    display: flex;
+    font-size: 14px;
+    color: #888;
+    padding: 0 15px;
+  }
+}
+</style>
+<template>
+  <view class="haizhi-class haizhi-card" @tap="handle({{info.title}})">
+    <view class="haizhi-card__hd">
+      <view class="haizhi-card__content">
+        <text>{{customData}}</text>
+      </view>
+      <view class="haizhi-card__extra">
+        <slot name="extra"></slot>
+      </view>
+    </view>
+    <view class="haizhi-card__bd">
+      <slot name="body"></slot>
+    </view>
+    <view class="haizhi-card__ft">
+      <slot name="footer"></slot>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import testMixin from '@/mixins/test' // alias example
+
+export default class haizhiCard extends wepy.component {
+  props = {
+    info: {
+      type: Object,
+      value: () => {
+        return {}
+      }
+    },
+    title: {
+      type: String,
+      value: '',
+      twoway: true
+    },
+    keyTitle: {
+      type: String
+    }
+  };
+  data = {
+    customData: this.title
+  };
+  methods = {
+    handle(title) {
+      let self = this;
+      console.log(this.info)
+      //静态编译，所以这里一变，所以通过repeat循环的都会变为同一个值，hack，在父组件对数据进行封装，不在组件中自定义data用于控制状态
+      this.customData = title
+      this.$apply()
+      console.log(this.customData)
+    }
+  };
+  watch = {
+    customData(newValue, oldValue) {
+      // console.log('customData',newValue)
+    }
+  }
+  onLoad() {//组件只有onLoad，onUnload生命周期
+    //而且这里只调用一次，并不是循环多少次调用多次
+    this.customData = this.title
+    this.$apply()
+    //对于对象的key值作为传参，这里获取不到，所以最好是在页面先用computed属性返回个基本类型,目前的问题
+    //repeat在和props混合使用时是有一些问题
+    console.log(this.info,this.title,this.keyTitle)
+  }
+  onHide() {//不触发
+    //console.log('in onHide')
+  }
+  onUnload() {
+    //当页面销毁时(如调用wx.redirectTo)的时候，才会触发这个生命周期函数,且先触发页面的
+    //console.log('in 组件 onUnload')
+  }
+}
+</script>
+

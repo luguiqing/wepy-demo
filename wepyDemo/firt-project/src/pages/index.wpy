@@ -1,0 +1,70 @@
+<style lang="less">
+
+</style>
+<template>
+  <view class="container">
+    <!-- slot插槽可以替换自组件的具体位置，在展示组件上有很大的用处 -->
+    <repeat for="{{cardInfo}}" key="index" index="index" item="item">
+      <Card :info="item" :title.sync="title" :keyTitle="item.title">
+        <view slot="body">{{item.body}}</view>
+        <view slot="extra">{{item.extra}}</view>
+        <view slot="footer">{{item.footer}}</view>
+      </Card>
+    </repeat>
+    <view @tap="goto">前往stepper</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Card from '@/components/card' // alias example
+
+  export default class Index extends wepy.page {
+    config = {
+      navigationBarTitleText: '海致星图'
+    }
+    components = {
+      Card
+    }
+
+    data = {
+      title: '页面一级属性',
+      cardInfo: [
+        {
+          title: '标题1',
+          body: '主题内容1',
+          extra: '操作按钮1',
+          footer: '底部内容1'
+        },
+        {
+          title: '标题2',
+          body: '主题内容2',
+          extra: '操作按钮2',
+          footer: '底部内容2'
+        }
+      ]
+    }
+
+    computed = {
+
+    }
+
+    methods = {
+      goto() {
+        // this.$navigate('./stepper')
+        this.$redirect('./stepper')
+      }
+    }
+
+    events = {
+
+    }
+
+    onLoad() {
+      // let self = this
+    }
+    onUnload() {
+      console.log('in 页面 onUnload')
+    }
+  }
+</script>
